@@ -11,8 +11,8 @@ using Random = UnityEngine.Random;
 public class DataManager : MonoBehaviour
 {
 
-    string url = "http://localhost/sample.json";
-    
+    string url = "https://covidtracking.com/api/v1/states/current.json";
+
     StateData[] m_States;
     bool m_DataCaptured;
 
