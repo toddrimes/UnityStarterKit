@@ -99,12 +99,12 @@ public class DataBarDisplay : MonoBehaviour
         set => m_StateCode5 = value;
     }
 
-    int? m_PositiveValues1;
-    int? m_PositiveValues2;
-    int? m_PositiveValues3;
-    int? m_PositiveValues4;
-    int? m_PositiveValues5;
-    int?[] m_CurrentValue;
+    int m_PositiveValues1;
+    int m_PositiveValues2;
+    int m_PositiveValues3;
+    int m_PositiveValues4;
+    int m_PositiveValues5;
+    int[] m_CurrentValue;
 
     bool m_DataChanged;
     bool m_DataSet;
