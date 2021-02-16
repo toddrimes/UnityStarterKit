@@ -15,6 +15,46 @@ public class DataManager : MonoBehaviour
 
     StateData[] m_States;
     bool m_DataCaptured;
+    Dictionary<int,List<StateData>> bands = new Dictionary<int, List<StateData>>();
+    private bool isBanded = false;
+    private int lowestCases, highestCases = 0;
+    private int num_of_bins = 4;
+
+    void Start()
+    {
+        bands.Add(0, new List<StateData>());
+        bands.Add(1, new List<StateData>());
+        bands.Add(2, new List<StateData>());
+        bands.Add(3, new List<StateData>());
+        bands.Add(4, new List<StateData>());
+    }
+
+    void Update()
+    {
+        // MakeBands();
+    }
+    void MakeBands()
+    {
+        if (m_DataCaptured && !isBanded)
+        {
+            foreach (StateData state in m_States)
+            {
+                lowestCases = (int) state.positive < lowestCases ? (int) state.positive : lowestCases;
+                highestCases = (int) state.positive > highestCases ? (int) state.positive : highestCases;
+            }
+
+            int bin_width = (highestCases - lowestCases) / num_of_bins;
+            int bin_num = 0;
+            foreach (StateData state in m_States)
+            {
+                bin_num = (int) Math.Floor( (int) (state.positive - lowestCases) / (bin_width * 1f) );
+                state.bin = bin_num;
+                Debug.Log($"bin_num is {bin_num} and state.bin is {state.bin} for {state.state}");
+                bands[bin_num].Add(state);
+            }
+            isBanded = true;
+        }
+    }
 
     public bool dataCaptured
     {
@@ -57,6 +97,18 @@ public class DataManager : MonoBehaviour
         if (m_DataCaptured)
         {
             return (int) m_States[GetStateIndex(stateCode)].positive;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    
+    public int GetFileDate(DataUIDisplay.StateCode stateCode)
+    {
+        if (m_DataCaptured)
+        {
+            return (int) m_States[GetStateIndex(stateCode)].date;
         }
         else
         {
@@ -129,4 +181,5 @@ public class StateData
     public int? positiveScore;
     public int? score;
     public string grade;
+    public int? bin;
 }

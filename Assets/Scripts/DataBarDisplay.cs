@@ -10,6 +10,9 @@ public class DataBarDisplay : MonoBehaviour
     DataManager m_DataManager;
     
     [SerializeField]
+    TMP_Text theTitle;
+    
+    [SerializeField]
     TMP_Text m_State1;
 
     [SerializeField]
@@ -96,7 +99,10 @@ public class DataBarDisplay : MonoBehaviour
     public DataUIDisplay.StateCode stateCode5
     {
         get => m_StateCode5;
-        set => m_StateCode5 = value;
+        set
+        {
+            m_StateCode5 = value;
+        }
     }
 
     int m_PositiveValues1;
@@ -145,6 +151,11 @@ public class DataBarDisplay : MonoBehaviour
             
             m_CurrentValue = new[] { m_PositiveValues1, m_PositiveValues2, m_PositiveValues3, m_PositiveValues4, m_PositiveValues5 };
             m_DataSet = true;
+            string stringDate = m_DataManager.GetFileDate(m_StateCode1).ToString();
+            string yyyy = stringDate.Substring(0, 4);
+            string mm = stringDate.Substring(4, 2);
+            string dd = stringDate.Substring(6, 2);
+            theTitle.text = $"COVID-19 cases / State: {mm}/{dd}/{yyyy}";
         }
         
         m_State1.text = m_StateCode1.ToString();
@@ -158,6 +169,12 @@ public class DataBarDisplay : MonoBehaviour
         m_Value3.text = m_CurrentValue[2].ToString();
         m_Value4.text = m_CurrentValue[3].ToString();
         m_Value5.text = m_CurrentValue[4].ToString();
+        
+        m_Value1.text = String.Format("{0:n0}", m_CurrentValue[0]);
+        m_Value2.text = String.Format("{0:n0}", m_CurrentValue[1]);
+        m_Value3.text = String.Format("{0:n0}", m_CurrentValue[2]);
+        m_Value4.text = String.Format("{0:n0}", m_CurrentValue[3]);
+        m_Value5.text = String.Format("{0:n0}", m_CurrentValue[4]);
 
         if (m_DataSet)
         {
@@ -187,7 +204,14 @@ public class DataBarDisplay : MonoBehaviour
     float GetNormalizedValue(int? value)
     {
         float retVal = ((float)value - (float)GetLowestValue()) / ((float)GetHighestValue() - (float)GetLowestValue());
-        return (retVal + 0.25f)* k_ValueMod;
+        if( Double.IsNaN((retVal + 0.25f) * k_ValueMod ))
+        {
+            return 6.25f;
+        }
+        else
+        {
+            return (retVal + 0.25f)* k_ValueMod;
+        }
     }
 
     int? GetHighestValue()
@@ -196,7 +220,7 @@ public class DataBarDisplay : MonoBehaviour
 
         for (int i = 0; i < m_CurrentValue.Length; i++)
         {
-            if (m_CurrentValue[i] > highestValue)
+            if (m_CurrentValue[i] >= highestValue)
             {
                 highestValue = m_CurrentValue[i];
             }
@@ -211,7 +235,7 @@ public class DataBarDisplay : MonoBehaviour
         
         for (int i = 0; i < m_CurrentValue.Length; i++)
         {
-            if (m_CurrentValue[i] < lowestValue)
+            if (m_CurrentValue[i] <= lowestValue)
             {
                 lowestValue = m_CurrentValue[i];
             }
