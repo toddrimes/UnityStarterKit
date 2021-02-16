@@ -32,7 +32,7 @@ public class DataManager : MonoBehaviour
         {
             yield return webRequest.SendWebRequest();
 
-            if (webRequest.isNetworkError || webRequest.isHttpError)
+            if (webRequest.result == UnityWebRequest.Result.ConnectionError)
             {
                 Debug.Log("Error occured with web request");
             }
